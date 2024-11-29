@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+</head>
+<body>
+ <h2>Welcome, {{ current_user.username }}!</h2>
+    <!-- Image Upload Form -->
+    <h1>Upload an Image</h1>
+    <form method="POST" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+        <div>
+            {{ form.image.label }}<br>
+            {{ form.image }}
+        </div>
+        <div>
+            {{ form.submit }}
+        </div>
+    </form>
+
+    <!-- Show Uploaded Images -->
+    <h2>Uploaded Images</h2>
+    <div>
+        {% for image in images %}
+            <div>
+                <img src="{{ url_for('uploaded_file', filename=image.filename) }}" alt="{{ image.filename }}" width="150">
+                <p>Uploaded by: {{ image.user.username }}</p>
+            </div>
+        {% endfor %}
+    </div>
+
+    {% if current_user.is_admin %}
+    <!-- Admin's Section: List of All Users and their Images -->
+    <h2>Registered Users and Their Images</h2>
+    <ul>
+        {% for user in users %}
+            <li>
+                <strong>{{ user.username }}</strong>
+                <ul>
+                    {% for image in user.images %}
+                        <li>
+                            <img src="{{ url_for('uploaded_file', filename=image.filename) }}" alt="{{ image.filename }}" width="150">
+                        </li>
+                    {% endfor %}
+                </ul>
+            </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>You are not an admin, so user list is hidden.</p>
+    {% endif %}
+
+    <!-- Logout Button -->
+    <a href="{{ url_for('logout') }}">Logout</a>
+
+</body>
+</html>
